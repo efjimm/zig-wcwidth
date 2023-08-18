@@ -13,12 +13,15 @@
 // SOFTWARE.
 
 const std = @import("std");
+
+const Codepoint = u21;
+
 const Interval = struct {
-    start: u32,
-    end: u32,
+    start: Codepoint,
+    end: Codepoint,
 };
 
-pub fn wcWidth(cp: u32) u2 {
+pub fn wcWidth(cp: Codepoint) u2 {
     switch (cp) {
         0...31, 0x7F...0x09F, 0x034F, 0x200B...0x200F, 0x2028, 0x2029, 0x202A...0x202E, 0x2060...0x2063 => return 0,
         else => {
@@ -30,14 +33,14 @@ pub fn wcWidth(cp: u32) u2 {
     }
 }
 
-fn inTable(table: []const Interval, cp: u32) bool {
+fn inTable(table: []const Interval, cp: Codepoint) bool {
     if (cp < table[0].start)
         return false;
 
     const compareFn = struct {
         pub fn compareFn(
             _: void,
-            key: u32,
+            key: Codepoint,
             mid: Interval,
         ) std.math.Order {
             return if (mid.start > key)
