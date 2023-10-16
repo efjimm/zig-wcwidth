@@ -2,4 +2,11 @@
 	.name = "wcwidth",
 	.version = "1.0.0",
 	.dependencies = .{},
+	.paths = .{
+		"LICENSE.txt",
+		"README.md",
+		"build.zig",
+		"build.zig.zon",
+		"src",
+	},
 }
