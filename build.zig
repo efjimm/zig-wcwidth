@@ -5,13 +5,13 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     _ = b.addModule("wcwidth", .{
-        .root_source_file = .{ .path = "src/wcwidth.zig" },
+        .root_source_file = b.path("src/wcwidth.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     const tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/wcwidth.zig" },
+        .root_source_file = b.path("src/wcwidth.zig"),
         .target = target,
         .optimize = optimize,
     });
