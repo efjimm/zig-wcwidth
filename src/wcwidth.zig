@@ -23,7 +23,15 @@ const Interval = struct {
 
 pub fn wcWidth(cp: Codepoint) u2 {
     switch (cp) {
-        0...31, 0x7F...0x09F, 0x034F, 0x200B...0x200F, 0x2028, 0x2029, 0x202A...0x202E, 0x2060...0x2063 => return 0,
+        0...31,
+        0x7F...0x09F,
+        0x034F,
+        0x200B...0x200F,
+        0x2028,
+        0x2029,
+        0x202A...0x202E,
+        0x2060...0x2063,
+        => return 0,
         else => {
             if (inTable(&zero_width, cp))
                 return 0;
@@ -37,47 +45,54 @@ fn inTable(table: []const Interval, cp: Codepoint) bool {
     if (cp < table[0].start)
         return false;
 
-    const compareFn = struct {
+    const Context = struct {
+        key: Codepoint,
+
         pub fn compareFn(
-            _: void,
-            key: Codepoint,
+            ctx: @This(),
             mid: Interval,
         ) std.math.Order {
-            return if (mid.start > key)
-                .lt
-            else if (mid.end < key)
+            return if (mid.start > ctx.key)
                 .gt
+            else if (mid.end < ctx.key)
+                .lt
             else
                 .eq;
         }
-    }.compareFn;
+    };
 
-    return std.sort.binarySearch(Interval, cp, table, {}, compareFn) != null;
+    return std.sort.binarySearch(
+        Interval,
+        table,
+        Context{ .key = cp },
+        Context.compareFn,
+    ) != null;
 }
 
 test {
     const t = std.testing;
     for (0..32) |c| {
-        try t.expectEqual(@as(u2, 0), wcWidth(@intCast(c)));
+        try t.expectEqual(0, wcWidth(@intCast(c)));
     }
 
     for (32..127) |c| {
-        try t.expectEqual(@as(u2, 1), wcWidth(@intCast(c)));
+        try t.expectEqual(1, wcWidth(@intCast(c)));
     }
 
     for (127..0xA0) |c| {
-        try t.expectEqual(@as(u2, 0), wcWidth(@intCast(c)));
+        try t.expectEqual(0, wcWidth(@intCast(c)));
     }
 
     for (zero_width) |interval| {
         for (interval.start..interval.end + 1) |i| {
-            try t.expectEqual(@as(u2, 0), wcWidth(@intCast(i)));
+            errdefer std.debug.print("GUH: 0x{x}\n", .{i});
+            try t.expectEqual(0, wcWidth(@intCast(i)));
         }
     }
 
     for (wide_eastasian) |interval| {
         for (interval.start..interval.end + 1) |i| {
-            t.expectEqual(@as(u2, 2), wcWidth(@intCast(i))) catch |err| {
+            t.expectEqual(2, wcWidth(@intCast(i))) catch |err| {
                 std.debug.print("{x}\n", .{i});
                 return err;
             };
