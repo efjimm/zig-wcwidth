@@ -1,6 +1,5 @@
 // termux's wcwidth implementation in zig
 // Rewritten from C so that dependencies don't have to link the C object
-// Copyright © 2023 Evan Bonner <ebonner@airmail.cc>
 //
 // Copyright © 2016 Fredrik Fornwall <fredrik@fornwall.net>
 //
@@ -53,9 +52,9 @@ fn inTable(table: []const Interval, cp: Codepoint) bool {
             mid: Interval,
         ) std.math.Order {
             return if (mid.start > ctx.key)
-                .gt
-            else if (mid.end < ctx.key)
                 .lt
+            else if (mid.end < ctx.key)
+                .gt
             else
                 .eq;
         }
