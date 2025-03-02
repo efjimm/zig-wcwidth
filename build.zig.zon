@@ -1,12 +1,13 @@
 .{
-	.name = "wcwidth",
-	.version = "1.0.0",
-	.dependencies = .{},
-	.paths = .{
-		"LICENSE.txt",
-		"README.md",
-		"build.zig",
-		"build.zig.zon",
-		"src",
-	},
+    .name = .wcwidth,
+    .version = "1.0.0",
+    .fingerprint = 0x70fbfe1d389f56f9,
+    .dependencies = .{},
+    .paths = .{
+        "LICENSE.txt",
+        "README.md",
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
 }
